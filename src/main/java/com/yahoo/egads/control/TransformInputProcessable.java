@@ -6,9 +6,8 @@
 
 package com.yahoo.egads.control;
 
-import java.util.ArrayList;
-
 import com.yahoo.egads.data.TimeSeries;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 import java.util.Properties;
@@ -55,5 +54,10 @@ public class TransformInputProcessable implements ProcessableObject {
 
     public Object result() throws Exception {
         return getForecastDatapointList();
+    }
+
+    @Override
+    public List<AnalysisResult> getAnalysisResults() {
+        throw new NotImplementedException();
     }
 }

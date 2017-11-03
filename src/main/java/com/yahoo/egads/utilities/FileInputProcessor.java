@@ -8,11 +8,14 @@ package com.yahoo.egads.utilities;
 
 // Class that implements EGADS file input processing.
 
+import com.yahoo.egads.control.AnalysisResult;
 import com.yahoo.egads.control.ProcessableObject;
 import com.yahoo.egads.control.ProcessableObjectFactory;
-import java.util.Properties;
 import com.yahoo.egads.data.TimeSeries;
+
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 public class FileInputProcessor implements InputProcessor {
     
@@ -26,9 +29,16 @@ public class FileInputProcessor implements InputProcessor {
         // Parse the input timeseries.
         ArrayList<TimeSeries> metrics = com.yahoo.egads.utilities.FileUtils
                 .createTimeSeries(this.file, p);
+
+        List<AnalysisResult> results = null;
         for (TimeSeries ts : metrics) {
             ProcessableObject po = ProcessableObjectFactory.create(ts, p);
             po.process();
+            results = po.getAnalysisResults();
         }
+
+        assert results != null;
+        results.forEach(ReportingUtils::render);
+
     }
 }

@@ -29,31 +29,32 @@
 
 package com.yahoo.egads.utilities;
 
+import com.yahoo.egads.control.AnalysisResult;
+import com.yahoo.egads.data.Anomaly;
+import com.yahoo.egads.data.Anomaly.Interval;
+import com.yahoo.egads.data.Anomaly.IntervalSequence;
+import com.yahoo.egads.data.AnomalyErrorStorage;
+import com.yahoo.egads.data.TimeSeries.DataSequence;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.AxisLocation;
-import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
-import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.plot.ValueMarker;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.plot.CombinedDomainXYPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYItemRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.ApplicationFrame;
-import com.yahoo.egads.data.TimeSeries.DataSequence;
-import com.yahoo.egads.data.Anomaly;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
-import com.yahoo.egads.data.Anomaly.IntervalSequence;
-import com.yahoo.egads.data.Anomaly.Interval;
-import java.awt.Color;
 import java.util.HashMap;
-import com.yahoo.egads.data.AnomalyErrorStorage;
 import java.util.Properties;
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 // Draws the time-series.
 public class GUIUtils extends ApplicationFrame {
@@ -196,10 +197,14 @@ public class GUIUtils extends ApplicationFrame {
     
     /**
      * Starting point for the forecasting charting demo application.
-     * @param args ignored.
+     * @param analysisResult ignored.
      */
-    public static void plotResults(DataSequence orig, DataSequence predicted, ArrayList<Anomaly> anomalyList, Properties config) {
-        GUIUtils gui = new GUIUtils("EGADS GUI", orig, predicted, anomalyList, config);
+    public static void plotResults(AnalysisResult analysisResult) {
+        GUIUtils gui = new GUIUtils("EGADS GUI",
+                analysisResult.getOriginalData(),
+                analysisResult.getPredictedData(),
+                analysisResult.getAnomalyList(),
+                analysisResult.getConfig());
         gui.pack();
         gui.setVisible(true);
         JFrame frame = new JFrame("EGADS GUI");

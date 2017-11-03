@@ -8,13 +8,17 @@
 
 package com.yahoo.egads.control;
 
+import java.util.List;
+
 public interface ProcessableObject {
 
     // The process() method instantiates the appropriate objects
     // depending on the concrete class implementation.
-    public void process() throws Exception;
+    void process() throws Exception;
 
     // The result() method returns list of anomalies
-    public Object result() throws Exception;
+    Object result() throws Exception;
+
+    List<AnalysisResult> getAnalysisResults();
 
 }

@@ -9,34 +9,40 @@
 package com.yahoo.egads.control;
 
 import com.yahoo.egads.data.TimeSeries;
+import com.yahoo.egads.models.adm.AnomalyDetectionAbstractModel;
+import com.yahoo.egads.models.tsmm.TimeSeriesAbstractModel;
 
 import java.lang.reflect.Constructor;
 import java.util.Properties;
 
-import com.yahoo.egads.models.adm.*;
-import com.yahoo.egads.models.tsmm.*;
-
 public class ProcessableObjectFactory {
 
     public static ProcessableObject create(TimeSeries ts, Properties config) {
+
         if (config.getProperty("OP_TYPE") == null) {
             throw new IllegalArgumentException("OP_TYPE is NULL");
         }
-        if (config.getProperty("OP_TYPE").equals("DETECT_ANOMALY")) {
-            ModelAdapter ma = ProcessableObjectFactory.buildTSModel(ts, config);
-            AnomalyDetector ad = ProcessableObjectFactory.buildAnomalyModel(ts, config);
-            return (new DetectAnomalyProcessable(ma, ad, config));
-        } else if (config.getProperty("OP_TYPE").equals("UPDATE_MODEL")) {
-            ModelAdapter ma = ProcessableObjectFactory.buildTSModel(ts, config);
-            return (new UpdateModelProcessable(ma, ts.data, config));
-        } else if (config.getProperty("OP_TYPE").equals("TRANSFORM_INPUT")) {
-            ModelAdapter ma = ProcessableObjectFactory.buildTSModel(ts, config);
-            return (new TransformInputProcessable(ma, config));
+
+        switch (config.getProperty("OP_TYPE")) {
+            case "DETECT_ANOMALY": {
+                ModelAdapter ma = ProcessableObjectFactory.buildTSModel(ts, config);
+                AnomalyDetector ad = ProcessableObjectFactory.buildAnomalyModel(ts, config);
+                return new DetectAnomalyProcessable(ma, ad, config);
+            }
+            case "UPDATE_MODEL": {
+                ModelAdapter ma = ProcessableObjectFactory.buildTSModel(ts, config);
+                return new UpdateModelProcessable(ma, ts.data, config);
+            }
+            case "TRANSFORM_INPUT": {
+                ModelAdapter ma = ProcessableObjectFactory.buildTSModel(ts, config);
+                return new TransformInputProcessable(ma, config);
+            }
+            default:
+                // Should not be here.
+                System.err.println("Unknown OP_TYPE, returning UPDATE_MODEL ProcessableObject");
+                ModelAdapter ma = ProcessableObjectFactory.buildTSModel(ts, config);
+                return new UpdateModelProcessable(ma, ts.data, config);
         }
-        // Should not be here.
-        System.err.println("Unknown OP_TYPE, returning UPDATE_MODEL ProcessableObject");
-        ModelAdapter ma = ProcessableObjectFactory.buildTSModel(ts, config);
-        return (new UpdateModelProcessable(ma, ts.data, config));
     }
 
     private static ModelAdapter buildTSModel(TimeSeries ts, Properties config) {
